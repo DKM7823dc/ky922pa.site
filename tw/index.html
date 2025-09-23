@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025</title>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", "PingFang TC", "Noto Sans CJK TC", sans-serif;
+        }
+        
+        .app-wrapper {
+            height: 100vh;
+            background-image: linear-gradient(to bottom, #0f172a, #1e293b, #334155);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .top-bar {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1rem 1.5rem;
+        }
+        
+        .main-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        .bottom-bar {
+            background-color: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1rem 1.5rem;
+        }
+        
+        .content-box {
+            width: 100%;
+            max-width: 28rem;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .book-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .book-icon-wrapper {
+            display: inline-block;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .book-icon-wrapper:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+        
+        .separator {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #fbbf24, transparent);
+            margin: 1.5rem 0;
+        }
+        
+        .message-area {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .highlight-text {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .info-card {
+            background-color: rgba(51, 65, 85, 0.4);
+            border-left: 3px solid #10b981;
+            padding: 0.75rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            font-weight: bold;
+            font-size: 1.125rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+            margin-bottom: 1rem;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.4);
+        }
+        
+        .dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+        
+        .dialog-container {
+            background: white;
+            width: 90vw;
+            max-width: 500px;
+            max-height: 85vh;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .dialog-top {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .dialog-content {
+            padding: 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            color: #1f2937;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            background: #10b981;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        
+        .btn-primary:hover {
+            background: #059669;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            background: #d1d5db;
+            color: #374151;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        
+        .btn-secondary:hover {
+            background: #9ca3af;
+        }
+        
+        .btn-single {
+            background: #475569;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn-single:hover {
+            background: #334155;
+        }
+
+        /* Utility classes */
+        .text-center { text-align: center; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        .text-slate-100 { color: #f1f5f9; }
+        .text-slate-200 { color: #e2e8f0; }
+        .text-slate-300 { color: #cbd5e1; }
+        .text-slate-400 { color: #94a3b8; }
+        .text-slate-500 { color: #64748b; }
+        .text-slate-600 { color: #475569; }
+        .text-slate-700 { color: #1f2937; }
+        .text-white { color: #ffffff; }
+        .text-emerald-400 { color: #34d399; }
+        .text-emerald-600 { color: #059669; }
+        .text-red-400 { color: #f87171; }
+        .text-amber-400 { color: #fbbf24; }
+        .text-gray-600 { color: #1f2937; }
+        .text-gray-500 { color: #6b7280; }
+        .leading-tight { line-height: 1.25; }
+        .leading-relaxed { line-height: 1.625; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .pt-3 { padding-top: 0.75rem; }
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .space-x-3 > * + * { margin-left: 0.75rem; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .border-t { border-top-width: 1px; }
+        .border-slate-700 { border-color: #334155; }
+        .underline { text-decoration: underline; }
+        .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .hover\:text-white:hover { color: #ffffff; }
+        .list-disc { list-style-type: disc; }
+        .list-inside { list-style-position: inside; }
+        
+        @media (max-width: 640px) {
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .top-bar {
+                padding: 0.75rem 1rem;
+            }
+            
+            .main-area {
+                padding: 1rem 0.75rem;
+            }
+            
+            .content-box {
+                padding: 1.25rem;
+            }
+            
+            .book-icon-wrapper {
+                font-size: 3rem;
+            }
+            
+            .action-btn {
+                font-size: 1rem;
+                padding: 0.875rem 1.25rem;
+            }
+            
+            .dialog-container {
+                width: 95vw;
+                max-height: 90vh;
+            }
+            
+            .dialog-content {
+                padding: 1.5rem;
+                max-height: 70vh;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .message-area h2 {
+                font-size: 1.125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .main-area {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .content-box {
+                padding: 1rem;
+            }
+            
+            .dialog-top {
+                padding: 1rem;
+            }
+            
+            .dialog-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        
+        <!-- Header -->
+        <div class="top-bar">
+            <div class="text-center">
+                <h1 class="text-lg font-bold text-slate-100">台灣股民限量贈書活動</h1>
+                <p class="text-sm text-slate-400 mt-1">ChatGPT超級應用・親簽典藏版</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <div class="content-box">
+                
+                <!-- Book Section -->
+                <div class="book-display">
+                    <div class="book-icon-wrapper">📖</div>
+                    <div class="separator"></div>
+                </div>
+
+                <!-- Message Section -->
+                <div class="message-area">
+                    <p class="text-slate-300 text-sm font-medium mb-3">
+                        🌍 致漂泊世界的台灣孩子
+                    </p>
+                    <h2 class="text-xl font-bold text-white leading-tight mb-3">
+                        這本《<span class="highlight-text">ChatGPT超級應用</span>》，<br>
+                        是我為你點亮的一盞燈
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        （1000冊親簽贈書，獻給在異鄉咬牙前行的你）
+                    </p>
+                </div>
+
+                <!-- Features -->
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="flex items-center">
+                            <span class="text-emerald-400 mr-2">✓</span>
+                            <span class="text-sm text-slate-200">全球包郵</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="flex items-center">
+                            <span class="text-red-400 mr-2">⚡</span>
+                            <span class="text-sm text-slate-200">數量有限</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <button class="action-btn" onclick="openSuccessDialog()">
+                    🎁 立即免費領取
+                </button>
+
+                <!-- Urgency -->
+                <p class="text-center text-amber-400 text-sm font-semibold">
+                    先到先得・送完即止
+                </p>
+                
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bottom-bar">
+            <div class="text-center text-slate-400 text-xs space-y-3">
+                <div class="border-t border-slate-700 pt-3">
+                    <div class="flex justify-center space-x-3 mb-3">
+                        <button onclick="openPrivacyDialog()" class="text-slate-300 hover:text-white underline transition-colors">
+                            隱私政策
+                        </button>
+                        <span class="text-slate-600">|</span>
+                        <button onclick="openTermsDialog()" class="text-slate-300 hover:text-white underline transition-colors">
+                            服務條款
+                        </button>
+                    </div>
+                    <p class="text-slate-500">© 2024 ChatGPT超級應用. 版權所有.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Success Dialog -->
+    <div id="successDialog" class="dialog-overlay">
+        <div class="dialog-container">
+            <div class="dialog-top">
+                <h3 class="text-xl font-bold">申請成功</h3>
+                <button class="close-btn" onclick="hideDialog('successDialog')">&times;</button>
+            </div>
+            <div class="dialog-content text-center">
+                <div class="text-5xl mb-4">🎉</div>
+                <h4 class="text-lg font-semibold text-emerald-600 mb-4">申請已成功提交！</h4>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    感謝您的申請！<br>
+                    請通過 <strong class="text-emerald-600">LINE官方</strong> 和我們取得聯系，<br>
+                    我們將盡快為您安排書籍配送。
+                </p>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="goToLine()">聯繫LINE</button>
+                    <button class="btn-secondary" onclick="hideDialog('successDialog')">知道了</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Dialog -->
+    <div id="privacyDialog" class="dialog-overlay">
+        <div class="dialog-container">
+            <div class="dialog-top">
+                <h3 class="text-xl font-bold">隱私政策</h3>
+                <button class="close-btn" onclick="hideDialog('privacyDialog')">&times;</button>
+            </div>
+            <div class="dialog-content">
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">1. 資料收集</h4>
+                <p class="mb-4">我們僅收集您提供的基本資訊，包括姓名、地址、電子郵件等，用於書籍配送服務。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">2. 資料使用</h4>
+                <p class="mb-2">您的個人資料僅用於：</p>
+                <ul class="list-disc list-inside mb-4 text-gray-600">
+                    <li>處理書籍申請和配送</li>
+                    <li>提供客戶服務支援</li>
+                    <li>發送相關活動通知</li>
+                </ul>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">3. 資料保護</h4>
+                <p class="mb-4">我們採用適當的技術和組織措施來保護您的個人資料，防止未經授權的存取、使用或洩露。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">4. 資料分享</h4>
+                <p class="mb-4">除法律要求外，我們不會與第三方分享您的個人資料。配送服務可能涉及物流合作夥伴，但僅限於完成配送所需的最少資訊。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">5. 您的權利</h4>
+                <p class="mb-6">您有權要求查看、更正、刪除或限制處理您的個人資料。</p>
+                
+                <div class="text-center">
+                    <button class="btn-single" onclick="hideDialog('privacyDialog')">我已閱讀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Dialog -->
+    <div id="termsDialog" class="dialog-overlay">
+        <div class="dialog-container">
+            <div class="dialog-top">
+                <h3 class="text-xl font-bold">服務條款</h3>
+                <button class="close-btn" onclick="hideDialog('termsDialog')">&times;</button>
+            </div>
+            <div class="dialog-content">
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">1. 活動內容</h4>
+                <p class="mb-4">本活動為限量免費贈書活動，提供《ChatGPT超級應用》親簽典藏版書籍，數量限1000本，送完為止。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">2. 申請資格</h4>
+                <p class="mb-4">任何年滿18歲的個人均可申請，每人限申請一本。未滿18歲者需經法定代理人同意。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">3. 配送說明</h4>
+                <p class="mb-4">我們提供全球免費配送服務。配送時間因地區而異，一般為7-21個工作日。配送地址以申請時提供的資訊為準。</p>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">4. 活動限制</h4>
+                <ul class="list-disc list-inside mb-4 text-gray-600">
+                    <li>每人限申請一本，重複申請無效</li>
+                    <li>書籍數量有限，先申請先得</li>
+                    <li>我們保留審核申請資格的權利</li>
+                    <li>我們保留隨時修改或終止活動的權利</li>
+                </ul>
+                
+                <h4 class="font-semibold text-lg mb-3 text-slate-700">5. 免責聲明</h4>
+                <p class="mb-6">書籍內容僅供參考，不構成投資建議。使用書籍內容產生的任何後果，申請者需自行承擔責任。</p>
+                
+                <div class="text-center">
+                    <button class="btn-single" onclick="hideDialog('termsDialog')">我同意條款</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSuccessDialog() {
+            document.getElementById('successDialog').style.display = 'flex';
+        }
+        
+        function openPrivacyDialog() {
+            document.getElementById('privacyDialog').style.display = 'flex';
+        }
+        
+        function openTermsDialog() {
+            document.getElementById('termsDialog').style.display = 'flex';
+        }
+        
+        function hideDialog(dialogId) {
+            document.getElementById(dialogId).style.display = 'none';
+        }
+        
+        function goToLine() {
+            window.open('https://www.qq.com', '_blank');
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('dialog-overlay')) {
+                e.target.style.display = 'none';
+            }
+        });
+        
+        document.querySelectorAll('.dialog-container').forEach(container => {
+            container.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
